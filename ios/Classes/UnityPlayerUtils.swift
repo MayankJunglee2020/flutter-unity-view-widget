@@ -94,6 +94,7 @@ var sharedApplication: UIApplication?
 
         if self.ufw?.appController() != nil {
             controller = self.ufw?.appController()
+            controller?.swizzle()
             controller?.unityMessageHandler = self.unityMessageHandlers
             controller?.unitySceneLoadedHandler = self.unitySceneLoadedHandlers
             self.ufw?.appController()?.window?.windowLevel = UIWindow.Level(UIWindow.Level.normal.rawValue - 1)
@@ -277,5 +278,20 @@ var sharedApplication: UIApplication?
                 c.handleSceneChangeEvent(info: addObject)
             }
         }
+    }
+}
+
+extension UnityAppController {
+    func swizzle() {
+        let originalSelector = Selector(UnityAppController.applicationDidEnterBackground)
+        let swizzledSelector = Selector(UnityAppController.applicationDidEnterBackground_Swizzled(application:))
+        let originalMethod = class_getInstanceMethod(self, name: originalSelector)
+        let swizzledMethod = class_getInstanceMethod(self, name: swizzledSelector)
+        method_exchangeImplementations(m1: originalMethod, m2: swizzledMethod)
+    }
+
+    @objc func applicationDidEnterBackground_Swizzled(application: UIApplication) {
+        print("aman: applicationDidEnterBackground_Swizzled")
+        applicationDidEnterBackground(application)
     }
 }
