@@ -94,7 +94,8 @@ var sharedApplication: UIApplication?
 
         if self.ufw?.appController() != nil {
             controller = self.ufw?.appController()
-            controller?.swizzle()
+            controller?.swizzleDidEnterBackground()
+            controller?.swizzleDidEnterForeground()
             controller?.unityMessageHandler = self.unityMessageHandlers
             controller?.unitySceneLoadedHandler = self.unitySceneLoadedHandlers
             self.ufw?.appController()?.window?.windowLevel = UIWindow.Level(UIWindow.Level.normal.rawValue - 1)
@@ -282,16 +283,49 @@ var sharedApplication: UIApplication?
 }
 
 extension UnityAppController {
-    func swizzle() {
-        let originalSelector = Selector(UnityAppController.applicationDidEnterBackground)
-        let swizzledSelector = Selector(UnityAppController.applicationDidEnterBackground_Swizzled(application:))
-        let originalMethod = class_getInstanceMethod(self, name: originalSelector)
-        let swizzledMethod = class_getInstanceMethod(self, name: swizzledSelector)
-        method_exchangeImplementations(m1: originalMethod, m2: swizzledMethod)
+    func swizzleDidEnterBackground() {
+        let originalSelector = #selector(UnityAppController.applicationDidEnterBackground)
+        let swizzledSelector = #selector(UnityAppController.applicationDidEnterBackground_Swizzled(application:))
+        guard let originalMethod = class_getInstanceMethod(UnityAppController.self, originalSelector) else {
+            print("aman: applicationDidEnterBackground_Swizzled originalMethod not found")
+            return
+        }
+        guard let swizzledMethod = class_getInstanceMethod(UnityAppController.self, swizzledSelector) else {
+            print("aman: applicationDidEnterBackground_Swizzled swizzledMethod not found")
+            return
+        }
+        method_exchangeImplementations(originalMethod, swizzledMethod)
+    }
+    
+    func swizzleDidEnterForeground() {
+        let originalSelector = #selector(UnityAppController.applicationWillEnterForeground)
+        let swizzledSelector = #selector(UnityAppController.applicationWillEnterForeground_Swizzled(application:))
+        guard let originalMethod = class_getInstanceMethod(UnityAppController.self, originalSelector) else {
+            print("aman: swizzleDidEnterForeground_Swizzled originalMethod not found")
+            return
+        }
+        guard let swizzledMethod = class_getInstanceMethod(UnityAppController.self, swizzledSelector) else {
+            print("aman: swizzleDidEnterForeground_Swizzled swizzledMethod not found")
+            return
+        }
+        method_exchangeImplementations(originalMethod, swizzledMethod)
     }
 
     @objc func applicationDidEnterBackground_Swizzled(application: UIApplication) {
         print("aman: applicationDidEnterBackground_Swizzled")
-        applicationDidEnterBackground(application)
+        self.applicationDidEnterBackground_Swizzled(application: application)
+        if (isUnityAppReady()) {
+            print("aman: applicationDidEnterBackground_Swizzled pause")
+            GetUnityPlayerUtils().ufw?.pause(true)
+        }
+    }
+    
+    @objc func applicationWillEnterForeground_Swizzled(application: UIApplication) {
+        print("aman: applicationDidEnterForeground_Swizzled")
+        self.applicationDidEnterBackground_Swizzled(application: application)
+        if (isUnityAppReady()) {
+            print("aman: applicationDidEnterBackground_Swizzled resume")
+            GetUnityPlayerUtils().ufw?.pause(false)
+        }
     }
 }
