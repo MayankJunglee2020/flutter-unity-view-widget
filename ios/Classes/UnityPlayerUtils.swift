@@ -287,11 +287,9 @@ extension UnityAppController {
         let originalSelector = #selector(UnityAppController.applicationDidEnterBackground)
         let swizzledSelector = #selector(UnityAppController.applicationDidEnterBackground_Swizzled(application:))
         guard let originalMethod = class_getInstanceMethod(UnityAppController.self, originalSelector) else {
-            print("aman: applicationDidEnterBackground_Swizzled originalMethod not found")
             return
         }
         guard let swizzledMethod = class_getInstanceMethod(UnityAppController.self, swizzledSelector) else {
-            print("aman: applicationDidEnterBackground_Swizzled swizzledMethod not found")
             return
         }
         method_exchangeImplementations(originalMethod, swizzledMethod)
@@ -301,30 +299,24 @@ extension UnityAppController {
         let originalSelector = #selector(UnityAppController.applicationWillEnterForeground)
         let swizzledSelector = #selector(UnityAppController.applicationWillEnterForeground_Swizzled(application:))
         guard let originalMethod = class_getInstanceMethod(UnityAppController.self, originalSelector) else {
-            print("aman: swizzleDidEnterForeground_Swizzled originalMethod not found")
             return
         }
         guard let swizzledMethod = class_getInstanceMethod(UnityAppController.self, swizzledSelector) else {
-            print("aman: swizzleDidEnterForeground_Swizzled swizzledMethod not found")
             return
         }
         method_exchangeImplementations(originalMethod, swizzledMethod)
     }
 
     @objc func applicationDidEnterBackground_Swizzled(application: UIApplication) {
-        print("aman: applicationDidEnterBackground_Swizzled")
         self.applicationDidEnterBackground_Swizzled(application: application)
         if (isUnityAppReady()) {
-            print("aman: applicationDidEnterBackground_Swizzled pause")
             GetUnityPlayerUtils().ufw?.pause(true)
         }
     }
     
     @objc func applicationWillEnterForeground_Swizzled(application: UIApplication) {
-        print("aman: applicationDidEnterForeground_Swizzled")
         self.applicationDidEnterBackground_Swizzled(application: application)
         if (isUnityAppReady()) {
-            print("aman: applicationDidEnterBackground_Swizzled resume")
             GetUnityPlayerUtils().ufw?.pause(false)
         }
     }
