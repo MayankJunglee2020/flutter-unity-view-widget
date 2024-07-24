@@ -315,7 +315,7 @@ extension UnityAppController {
     }
     
     @objc func applicationWillEnterForeground_Swizzled(application: UIApplication) {
-        self.applicationDidEnterBackground_Swizzled(application: application)
+        self.applicationWillEnterForeground_Swizzled(application: application)
         if (isUnityAppReady()) {
             GetUnityPlayerUtils().ufw?.pause(false)
         }
