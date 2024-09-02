@@ -94,6 +94,8 @@ var sharedApplication: UIApplication?
 
         if self.ufw?.appController() != nil {
             controller = self.ufw?.appController()
+            controller?.swizzleDidEnterBackground()
+            controller?.swizzleDidEnterForeground()
             controller?.unityMessageHandler = self.unityMessageHandlers
             controller?.unitySceneLoadedHandler = self.unitySceneLoadedHandlers
             self.ufw?.appController()?.window?.windowLevel = UIWindow.Level(UIWindow.Level.normal.rawValue - 1)
@@ -170,7 +172,7 @@ var sharedApplication: UIApplication?
             return
         }
 
-        let unityAppController = self.ufw?.appController as? UnityAppController
+        let unityAppController = self.ufw?.appController() as? UnityAppController
         let application = UIApplication.shared
 
         if notification?.name == UIApplication.willResignActiveNotification {
@@ -199,13 +201,10 @@ var sharedApplication: UIApplication?
             UIApplication.willEnterForegroundNotification,
             UIApplication.didReceiveMemoryWarningNotification
         ] {
-            guard let name = name as? String else {
-                continue
-            }
             NotificationCenter.default.addObserver(
                 self,
                 selector: #selector(self.handleAppStateDidChange),
-                name: NSNotification.Name(name),
+                name: name,
                 object: nil)
         }
     }
@@ -279,6 +278,46 @@ var sharedApplication: UIApplication?
             for c in globalControllers {
                 c.handleSceneChangeEvent(info: addObject)
             }
+        }
+    }
+}
+
+extension UnityAppController {
+    func swizzleDidEnterBackground() {
+        let originalSelector = #selector(UnityAppController.applicationDidEnterBackground)
+        let swizzledSelector = #selector(UnityAppController.applicationDidEnterBackground_Swizzled(application:))
+        guard let originalMethod = class_getInstanceMethod(UnityAppController.self, originalSelector) else {
+            return
+        }
+        guard let swizzledMethod = class_getInstanceMethod(UnityAppController.self, swizzledSelector) else {
+            return
+        }
+        method_exchangeImplementations(originalMethod, swizzledMethod)
+    }
+    
+    func swizzleDidEnterForeground() {
+        let originalSelector = #selector(UnityAppController.applicationWillEnterForeground)
+        let swizzledSelector = #selector(UnityAppController.applicationWillEnterForeground_Swizzled(application:))
+        guard let originalMethod = class_getInstanceMethod(UnityAppController.self, originalSelector) else {
+            return
+        }
+        guard let swizzledMethod = class_getInstanceMethod(UnityAppController.self, swizzledSelector) else {
+            return
+        }
+        method_exchangeImplementations(originalMethod, swizzledMethod)
+    }
+
+    @objc func applicationDidEnterBackground_Swizzled(application: UIApplication) {
+        self.applicationDidEnterBackground_Swizzled(application: application)
+        if (isUnityAppReady()) {
+            GetUnityPlayerUtils().ufw?.pause(true)
+        }
+    }
+    
+    @objc func applicationWillEnterForeground_Swizzled(application: UIApplication) {
+        self.applicationWillEnterForeground_Swizzled(application: application)
+        if (isUnityAppReady()) {
+            GetUnityPlayerUtils().ufw?.pause(false)
         }
     }
 }
