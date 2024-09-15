@@ -81,6 +81,12 @@ var sharedApplication: UIApplication?
 
     func initUnity() {
         if (self.unityIsInitiallized()) {
+            if (self.ufw?.appController().unityMessageHandler == nil) {
+                self.ufw?.appController().unityMessageHandler = self.unityMessageHandlers
+            }
+            if (self.ufw?.appController().unitySceneLoadedHandler == nil) {
+                self.ufw?.appController().unitySceneLoadedHandler = self.unitySceneLoadedHandlers
+            }
             self.ufw?.showUnityWindow()
             return
         }
@@ -184,6 +190,8 @@ var sharedApplication: UIApplication?
         } else if notification?.name == UIApplication.didBecomeActiveNotification {
             unityAppController?.applicationDidBecomeActive(application)
         } else if notification?.name == UIApplication.willTerminateNotification {
+            unityAppController?.unityMessageHandler = nil
+            unityAppController?.unitySceneLoadedHandler = nil
             unityAppController?.applicationWillTerminate(application)
         } else if notification?.name == UIApplication.didReceiveMemoryWarningNotification {
             unityAppController?.applicationDidReceiveMemoryWarning(application)
