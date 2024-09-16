@@ -190,6 +190,9 @@ var sharedApplication: UIApplication?
         } else if notification?.name == UIApplication.didBecomeActiveNotification {
             unityAppController?.applicationDidBecomeActive(application)
         } else if notification?.name == UIApplication.willTerminateNotification {
+            if (isUnityAppReady()) {
+                GetUnityPlayerUtils().ufw?.pause(true)
+            }
             unityAppController?.unityMessageHandler = nil
             // unityAppController?.unitySceneLoadedHandler = nil
             unityAppController?.applicationWillTerminate(application)
