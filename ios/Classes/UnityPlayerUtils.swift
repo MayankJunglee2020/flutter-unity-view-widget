@@ -84,9 +84,6 @@ var sharedApplication: UIApplication?
             if (self.ufw?.appController().unityMessageHandler == nil) {
                 self.ufw?.appController().unityMessageHandler = self.unityMessageHandlers
             }
-            // if (self.ufw?.appController().unitySceneLoadedHandler == nil) {
-            //     self.ufw?.appController().unitySceneLoadedHandler = self.unitySceneLoadedHandlers
-            // }
             self.ufw?.showUnityWindow()
             return
         }
@@ -194,7 +191,6 @@ var sharedApplication: UIApplication?
                 self.ufw?.pause(true)
             }
             unityAppController?.unityMessageHandler = nil
-            // unityAppController?.unitySceneLoadedHandler = nil
             unityAppController?.applicationWillTerminate(application)
         } else if notification?.name == UIApplication.didReceiveMemoryWarningNotification {
             unityAppController?.applicationDidReceiveMemoryWarning(application)
