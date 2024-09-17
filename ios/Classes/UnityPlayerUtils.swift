@@ -81,6 +81,9 @@ var sharedApplication: UIApplication?
 
     func initUnity() {
         if (self.unityIsInitiallized()) {
+            if (self.ufw?.appController().unityMessageHandler == nil) {
+                self.ufw?.appController().unityMessageHandler = self.unityMessageHandlers
+            }
             self.ufw?.showUnityWindow()
             return
         }
@@ -184,6 +187,21 @@ var sharedApplication: UIApplication?
         } else if notification?.name == UIApplication.didBecomeActiveNotification {
             unityAppController?.applicationDidBecomeActive(application)
         } else if notification?.name == UIApplication.willTerminateNotification {
+            // pause the unity player before app is terminated
+            // this is to replicate the behavior of unity player when app is terminated
+            // to as was there in 4.2.81 and previous versions
+            // this will pause the unity and it's events
+            // which is right now causing crash in flutter side
+            // Exception: "Cannot create web request without initializing the system"
+            if (_isUnityReady) {
+                self.ufw?.pause(true)
+            }
+            // setting unityMessageHandler to nil to avoid sending messages to flutter
+            // as right now after 4.2.82 release for background foreground pause resume
+            // when app is terminated unity is sending message for AppState/GameEnd to flutter
+            // which is causing crash in flutter side 
+            // Exception: "Sending message before FlutterEngine is run."
+            unityAppController?.unityMessageHandler = nil
             unityAppController?.applicationWillTerminate(application)
         } else if notification?.name == UIApplication.didReceiveMemoryWarningNotification {
             unityAppController?.applicationDidReceiveMemoryWarning(application)
