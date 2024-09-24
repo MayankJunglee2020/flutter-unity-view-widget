@@ -350,8 +350,8 @@ class FlutterUnityWidgetController(
 
     // DO NOT CHANGE THIS FUNCTION
     private fun refocusUnity() {
-        UnityPlayerUtils.resume()
-        UnityPlayerUtils.pause()
+        // UnityPlayerUtils.resume()
+        // UnityPlayerUtils.pause()
         UnityPlayerUtils.resume()
     }
 
