@@ -36,6 +36,7 @@ class UnityPlayerUtils {
         fun focus() {
             try {
                 unityPlayer!!.windowFocusChanged(unityPlayer!!.requestFocus())
+                Log.e(LOG_TAG, "focus() method called from UnityPlayerUtils") 
                 unityPlayer!!.resume()
             } catch (e: Exception) {
                 Log.e(LOG_TAG, e.toString())
@@ -56,6 +57,7 @@ class UnityPlayerUtils {
                 unityPlayer!!.bringToFront()
                 unityPlayer!!.requestLayout()
                 unityPlayer!!.invalidate()
+                Log.e(LOG_TAG, "createUnityPlayer.focus() 1 method called from UnityPlayerUtils") 
                 focus()
                 callback?.onReady()
                 return
@@ -74,6 +76,7 @@ class UnityPlayerUtils {
                     activity!!.window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
                 }
 
+                Log.e(LOG_TAG, "createUnityPlayer.focus() 2 method called from UnityPlayerUtils") 
                 focus()
                 callback?.onReady()
             } catch (e: Exception) {

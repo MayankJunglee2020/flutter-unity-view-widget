@@ -68,6 +68,7 @@ class FlutterUnityWidgetController(
 
         if(UnityPlayerUtils.unityPlayer == null) {
             createPlayer()
+            Log.e(LOG_TAG, "init.refocusUnity method called from UnityPlayerUtils/FlutterUnityWidgetController")
             refocusUnity()
         } else if(!UnityPlayerUtils.unityLoaded) {
             createPlayer()
@@ -107,6 +108,7 @@ class FlutterUnityWidgetController(
     override fun onMethodCall(methodCall: MethodCall, result: MethodChannel.Result) {
         when (methodCall.method) {
             "unity#waitForUnity" -> {
+                Log.e(LOG_TAG, "unity#waitForUnity event called from UnityPlayerUtils/FlutterUnityWidgetController")
                 if (UnityPlayerUtils.unityPlayer != null) {
                     result.success(null)
                     return
@@ -117,16 +119,20 @@ class FlutterUnityWidgetController(
             "unity#createPlayer" -> {
                 invalidateFrameIfNeeded()
                 this.createPlayer()
+                Log.e(LOG_TAG, "unity#createPlayer event called from UnityPlayerUtils/FlutterUnityWidgetController")
                 refocusUnity()
                 result.success(null)
             }
             "unity#isReady" -> {
+                Log.e(LOG_TAG, "unity#isReady event called from UnityPlayerUtils/FlutterUnityWidgetController")
                 result.success(UnityPlayerUtils.unityPlayer != null)
             }
             "unity#isLoaded" -> {
+                Log.e(LOG_TAG, "unity#isLoaded event called from UnityPlayerUtils/FlutterUnityWidgetController")
                 result.success(UnityPlayerUtils.unityLoaded)
             }
-            "unity#isPaused" -> {
+            "unity#isPaused" -> {   
+                Log.e(LOG_TAG, "unity#isPaused event called from UnityPlayerUtils/FlutterUnityWidgetController")
                 result.success(UnityPlayerUtils.unityPaused)
             }
             "unity#postMessage" -> {
@@ -135,25 +141,30 @@ class FlutterUnityWidgetController(
                 val methodName: String = methodCall.argument<String>("methodName").toString()
                 val message: String = methodCall.argument<String>("message").toString()
                 UnityPlayerUtils.postMessage(gameObject, methodName, message)
+                Log.e(LOG_TAG, "unity#postMessage event called from UnityPlayerUtils/FlutterUnityWidgetController")
                 result.success(true)
             }
             "unity#pausePlayer" -> {
                 invalidateFrameIfNeeded()
+                Log.e(LOG_TAG, "unity#pausePlayer event called from UnityPlayerUtils/FlutterUnityWidgetController")
                 UnityPlayerUtils.pause()
                 result.success(true)
             }
             "unity#openInNativeProcess" -> {
                 openNativeUnity()
+                Log.e(LOG_TAG, "unity#openInNativeProcess event called from UnityPlayerUtils/FlutterUnityWidgetController")
                 result.success(true)
             }
             "unity#resumePlayer" -> {
                 invalidateFrameIfNeeded()
+                Log.e(LOG_TAG, "unity#resumePlayer event called from UnityPlayerUtils/FlutterUnityWidgetController")
                 UnityPlayerUtils.resume()
                 result.success(true)
             }
             "unity#unloadPlayer" -> {
                 invalidateFrameIfNeeded()
                 UnityPlayerUtils.unload()
+                Log.e(LOG_TAG, "unity#unloadPlayer event called from UnityPlayerUtils/FlutterUnityWidgetController")
                 result.success(true)
             }
             "unity#dispose" -> {
@@ -238,6 +249,7 @@ class FlutterUnityWidgetController(
         reattachToView()
         if(UnityPlayerUtils.viewStaggered && UnityPlayerUtils.unityLoaded) {
             this.createPlayer()
+            Log.e(LOG_TAG, "onResume method called from UnityPlayerUtils/FlutterUnityWidgetController")
             refocusUnity()
             UnityPlayerUtils.viewStaggered = false
         }
@@ -344,6 +356,7 @@ class FlutterUnityWidgetController(
 
         // add unity to view
         UnityPlayerUtils.addUnityViewToGroup(view)
+        Log.e(LOG_TAG, "attachToView method called from UnityPlayerUtils/FlutterUnityWidgetController")
         UnityPlayerUtils.focus()
         attached = true
     }
