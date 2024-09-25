@@ -84,7 +84,8 @@ class UnityPlayerUtils {
         fun postMessage(gameObject: String, methodName: String, message: String) {
             if (unityPlayer == null || !unityLoaded) {
                 return
-            } 
+            }
+            Log.e(LOG_TAG, "postMessage() method called from UnityPlayerUtils") 
             UnityPlayer.UnitySendMessage(gameObject, methodName, message)
         }
 
@@ -92,6 +93,7 @@ class UnityPlayerUtils {
             try {
                 if (unityPlayer != null) {
                     unityPlayer!!.pause()
+                    Log.e(LOG_TAG, "pause() method called from UnityPlayerUtils")
                     unityPaused = true
                 }
             } catch (e: Exception) {
@@ -103,6 +105,7 @@ class UnityPlayerUtils {
             try {
                 if (unityPlayer != null) {
                     unityPlayer!!.resume()
+                    Log.e(LOG_TAG, "resume() method called from UnityPlayerUtils")
                     unityPaused = false
                 }
             } catch (e: Exception) {
@@ -114,6 +117,7 @@ class UnityPlayerUtils {
             try {
                 if (unityPlayer != null) {
                     unityPlayer!!.unload()
+                    Log.e(LOG_TAG, "unload() method called from UnityPlayerUtils") 
                     unityLoaded = false
                 }
             } catch (e: Exception) {
@@ -125,6 +129,7 @@ class UnityPlayerUtils {
             try {
                 if (unityPlayer != null) {
                     unityPlayer!!.quit()
+                    Log.e(LOG_TAG, "quitPlayer() method called from UnityPlayerUtils") 
                     unityLoaded = false
                 }
             } catch (e: Error) {
@@ -140,6 +145,7 @@ class UnityPlayerUtils {
             for (listener in mUnityEventListeners) {
                 try {
                     listener.onSceneLoaded(name, buildIndex, isLoaded, isValid)
+                    Log.e(LOG_TAG, "onUnitySceneLoaded() method called from UnityPlayerUtils") 
                 } catch (e: Exception) {
                     e.message?.let { Log.e(LOG_TAG, it) }
                 }
@@ -155,6 +161,7 @@ class UnityPlayerUtils {
             for (listener in mUnityEventListeners) {
                 try {
                     listener.onMessage(message)
+                    Log.e(LOG_TAG, "onMessage() method called from UnityPlayerUtils") 
                 } catch (e: Exception) {
                     e.message?.let { Log.e(LOG_TAG, it) }
                 }
