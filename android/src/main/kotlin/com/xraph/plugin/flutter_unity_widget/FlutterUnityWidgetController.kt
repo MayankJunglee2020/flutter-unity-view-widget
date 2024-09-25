@@ -68,13 +68,15 @@ class FlutterUnityWidgetController(
 
         if(UnityPlayerUtils.unityPlayer == null) {
             createPlayer()
-            Log.e(LOG_TAG, "init.refocusUnity method called from UnityPlayerUtils/FlutterUnityWidgetController")
+            Log.e(LOG_TAG, "init 1 method called from UnityPlayerUtils/FlutterUnityWidgetController")
             refocusUnity()
         } else if(!UnityPlayerUtils.unityLoaded) {
             createPlayer()
+            Log.e(LOG_TAG, "init 2 method called from UnityPlayerUtils/FlutterUnityWidgetController")
             attachToView()
         } else {
             // attach unity to controller
+            Log.e(LOG_TAG, "init 3 method called from UnityPlayerUtils/FlutterUnityWidgetController")
             attachToView()
         }
     }
@@ -370,6 +372,7 @@ class FlutterUnityWidgetController(
 
     fun reattachToView() {
         if (UnityPlayerUtils.unityPlayer!!.parent != view) {
+            Log.e(LOG_TAG, "reattachToView() method called from UnityPlayerUtils/FlutterUnityWidgetController")
             this.attachToView()
             Handler(Looper.getMainLooper()).post {
                 methodChannel.invokeMethod("events#onViewReattached", null)

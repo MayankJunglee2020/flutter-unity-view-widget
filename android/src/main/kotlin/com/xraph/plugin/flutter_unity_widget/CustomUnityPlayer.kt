@@ -24,8 +24,8 @@ class CustomUnityPlayer(context: Activity, upl: IUnityPlayerLifecycleEvents?) : 
     override fun onAttachedToWindow() {
         Log.i(LOG_TAG, "onAttachedToWindow")
         super.onAttachedToWindow()
-        UnityPlayerUtils.resume()
-        UnityPlayerUtils.pause()
+        // UnityPlayerUtils.resume()
+        // UnityPlayerUtils.pause()
         UnityPlayerUtils.resume()
     }
 
