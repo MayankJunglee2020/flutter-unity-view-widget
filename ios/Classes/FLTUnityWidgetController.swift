@@ -114,8 +114,9 @@ public class FLTUnityWidgetController: NSObject, FLTUnityOptionsSink, FlutterPla
         if superview != _rootView {
             attachView()
         }
-
-        GetUnityPlayerUtils().resume()
+        if GetUnityPlayerUtils().isUnityPaused() == true {
+            GetUnityPlayerUtils().resume()
+        }
     }
 
     func removeViewIfNeeded() {
