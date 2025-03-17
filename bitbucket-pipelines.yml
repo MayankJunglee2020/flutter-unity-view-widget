@@ -1,0 +1,30 @@
+definitions:
+  caches:
+    ox-docker-image-cache: ox-docker-image-cache
+  services:
+    docker:
+      memory: 2048
+pipelines:
+  branches:
+    "**":
+      - step:
+          name: OX
+          services:
+            - docker
+          caches:
+            - ox-docker-image-cache
+          runs-on:
+            - self.hosted
+            - linux
+            - howzat
+            - sonarqube
+          image: node:18
+          script:
+            - echo "Attempting to use cached docker image..."
+            - if [ -f "ox-docker-image-cache/cache.tar" ]; then docker load < ox-docker-image-cache/cache.tar; fi
+            - export OX_BITBUCKET_FULL_COMMIT=$(git rev-parse --verify $BITBUCKET_COMMIT 2>/dev/null)
+            - pipe: docker://oxsecurity/ox-block-mode
+              variables:
+                OX_API_KEY: $OX_API_KEY
+                OX_BITBUCKET_FULL_COMMIT: $OX_BITBUCKET_FULL_COMMIT
+            - if [ ! -f "ox-docker-image-cache/cache.tar" ]; then docker save $(docker images -qa) > ox-docker-image-cache/cache.tar; fi
